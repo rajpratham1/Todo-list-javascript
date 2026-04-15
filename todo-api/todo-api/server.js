@@ -71,9 +71,16 @@ app.use(errorHandler); // Handle all other errors
 // ========================
 // Start the Server
 // ========================
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-  console.log(`📡 API Health Check: http://localhost:${PORT}/`);
-  console.log(`👨‍💻 Developer: rajpratham1 | GitHub: https://github.com/rajpratham1\n`);
-});
+
+// Export app for Vercel serverless functions
+module.exports = app;
+
+// Only start server in local development (not on Vercel)
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`📡 API Health Check: http://localhost:${PORT}/`);
+    console.log(`👨‍💻 Developer: rajpratham1 | GitHub: https://github.com/rajpratham1\n`);
+  });
+}

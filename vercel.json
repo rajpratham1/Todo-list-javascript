@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "todo-api/todo-api/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "todo-api/todo-api/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
