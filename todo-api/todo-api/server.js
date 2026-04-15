@@ -39,9 +39,9 @@ connectDB().then((connected) => {
 });
 
 // ========================
-// Health Check & Status Route
+// Health Check & Status Route (JSON API)
 // ========================
-app.get("/", (req, res) => {
+app.get("/api/status", (req, res) => {
   res.json({
     success: true,
     message: "🚀 Todo API is running!",
@@ -64,6 +64,18 @@ app.get("/", (req, res) => {
       },
     },
   });
+});
+
+// ========================
+// Documentation UI (Root & /docs)
+// ========================
+const path = require("path");
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../api-docs.html"));
+});
+
+app.get("/docs", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../api-docs.html"));
 });
 
 // ========================
