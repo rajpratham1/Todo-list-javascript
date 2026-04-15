@@ -13,11 +13,6 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 dotenv.config();
 
 // ========================
-// Connect to MongoDB
-// ========================
-connectDB();
-
-// ========================
 // Initialize Express App
 // ========================
 const app = express();
@@ -29,13 +24,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // ========================
-// API Routes
+// Connect to MongoDB (Non-blocking for Vercel)
 // ========================
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/todos", require("./routes/todoRoutes"));
+let dbConnected = false;
+
+// Try to connect to MongoDB - don't block startup if it fails
+connectDB().then((connected) => {
+  dbConnected = connected;
+  if (connected) {
+    console.log("✅ MongoDB Connection initialized");
+  } else {
+    console.warn("⚠️  MongoDB not connected - API will be limited");
+  }
+});
 
 // ========================
-// Health Check Route
+// Health Check & Status Route
 // ========================
 app.get("/", (req, res) => {
   res.json({
@@ -44,6 +48,7 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     developer: "rajpratham1",
     github: "https://github.com/rajpratham1",
+    database: dbConnected ? "✅ Connected" : "❌ Not Connected",
     endpoints: {
       auth: {
         register: "POST /api/auth/register",
@@ -60,6 +65,12 @@ app.get("/", (req, res) => {
     },
   });
 });
+
+// ========================
+// API Routes
+// ========================
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/todos", require("./routes/todoRoutes"));
 
 // ========================
 // Error Handling Middleware
